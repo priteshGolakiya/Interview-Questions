@@ -40,9 +40,9 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // Routes
-app.use("/api/categories", categoryRoutes);
-app.use("/api/questions", questionRoutes);
-app.use("/api/answers", answerRoutes);
+app.use("/categories", categoryRoutes);
+app.use("/questions", questionRoutes);
+app.use("/answers", answerRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Interview Questions API!");
