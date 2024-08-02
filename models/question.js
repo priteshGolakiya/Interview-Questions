@@ -11,7 +11,6 @@ const QuestionSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "Please provide a question description"],
     },
     difficulty: {
       type: String,
