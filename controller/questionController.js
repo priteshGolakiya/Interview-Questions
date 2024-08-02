@@ -37,9 +37,24 @@ const createQuestion = async (req, res) => {
 
 const getQuestions = async (req, res) => {
   try {
-    const questions = await Question.find()
+    const { category } = req.query;
+    let query = {};
+
+    if (category) {
+      const foundCategory = await Category.findOne({
+        name: new RegExp(category, "i"),
+      });
+      if (foundCategory) {
+        query.category = foundCategory._id;
+      } else {
+        return res.status(404).json({ message: "Category not found" });
+      }
+    }
+
+    const questions = await Question.find(query)
       .populate("category", "name")
       .populate("answers");
+
     res.json(questions);
   } catch (error) {
     console.error("Error retrieving questions:", error);
