@@ -31,12 +31,14 @@ app.use(limiter);
 // Middleware
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    origin: (origin, callback) => {
+      callback(null, true);
+    },
     credentials: true,
   })
 );
+
 app.use(cookieParser());
-app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // Routes
