@@ -16,15 +16,19 @@ const answerRoutes = require("./routes/answersRoutes");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 // Security middleware
 app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
 
-// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  trustProxy: true,
 });
 app.use(limiter);
 
@@ -39,7 +43,11 @@ app.use(
 );
 
 app.use(cookieParser());
+app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// Favicon
+app.get("/favicon.ico", (req, res) => res.status(204));
 
 // Routes
 app.use("/categories", categoryRoutes);
