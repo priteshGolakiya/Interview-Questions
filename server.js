@@ -3,9 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
-const helmet = require("helmet");
-const xss = require("xss-clean");
-const rateLimit = require("express-rate-limit");
 const connectDB = require("./db/connection");
 const errorHandler = require("./middleware/errorHandler");
 const notFound = require("./middleware/notFound");
@@ -16,21 +13,8 @@ const answerRoutes = require("./routes/answersRoutes");
 
 const app = express();
 
-app.set("trust proxy", 1);
-
 // Security middleware
-app.use(helmet());
-app.use(xss());
 app.use(mongoSanitize());
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  trustProxy: true,
-});
-app.use(limiter);
 
 // Middleware
 app.use(
