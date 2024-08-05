@@ -31,7 +31,7 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // Favicon
-app.get("/favicon.ico", (req, res) => res.status(204));
+// app.get("/favicon.ico", (req, res) => res.status(204));
 
 // Routes
 app.use("/categories", categoryRoutes);
