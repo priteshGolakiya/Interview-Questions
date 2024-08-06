@@ -6,7 +6,7 @@ const {
   getAnswer,
   updateAnswer,
   deleteAnswer,
-} = require("../controller/answerController");
+} = require("../../controller/answerController");
 
 // Answer routes
 router.post("/", createAnswer);

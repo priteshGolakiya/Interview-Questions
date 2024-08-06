@@ -6,10 +6,16 @@ const mongoSanitize = require("express-mongo-sanitize");
 const connectDB = require("./db/connection");
 const errorHandler = require("./middleware/errorHandler");
 const notFound = require("./middleware/notFound");
+const adminAuthMiddleware = require("./middleware/adminAuthMiddleware.js");
 
-const categoryRoutes = require("./routes/categoryRoutes");
-const questionRoutes = require("./routes/questionRoutes");
-const answerRoutes = require("./routes/answersRoutes");
+const commonRoutes = require("./routes/common/common.js");
+const categoryRoutes = require("./routes/common/categoryRoutes.js");
+const questionRoutes = require("./routes/common/questionRoutes.js");
+const answerRoutes = require("./routes/common/answersRoutes.js");
+
+const adminCategoryRoutes = require("./routes/admin/adminCategoryRoutes.js");
+const adminQuestionRoutes = require("./routes/admin/adminQuestionRoutes.js");
+const adminAnswerRoutes = require("./routes/admin/adminAnswerRoutes");
 
 const app = express();
 
@@ -30,10 +36,13 @@ app.use(cookieParser());
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
-// Favicon
-// app.get("/favicon.ico", (req, res) => res.status(204));
+app.use("/admin", adminAuthMiddleware);
+app.use("/admin/categories", adminCategoryRoutes);
+app.use("/admin/questions", adminQuestionRoutes);
+app.use("/admin/answers", adminAnswerRoutes);
 
 // Routes
+app.use("/", commonRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/questions", questionRoutes);
 app.use("/answers", answerRoutes);

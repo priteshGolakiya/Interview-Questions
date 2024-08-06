@@ -37,9 +37,10 @@ const createQuestion = async (req, res) => {
 
 const getQuestions = async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category, page = 1, limit = 10, search } = req.query;
     let query = {};
 
+    // Category filter
     if (category) {
       const foundCategory = await Category.findOne({
         name: new RegExp(category, "i"),
@@ -51,11 +52,36 @@ const getQuestions = async (req, res) => {
       }
     }
 
+    // Search functionality
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { tags: { $in: [new RegExp(search, "i")] } },
+      ];
+    }
+
+    // Pagination
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Execute query with pagination
     const questions = await Question.find(query)
       .populate("category", "name")
-      .populate("answers");
+      .populate("answers")
+      .skip(skip)
+      .limit(limitNumber);
 
-    res.json(questions);
+    // Get total count for pagination info
+    const totalQuestions = await Question.countDocuments(query);
+
+    res.json({
+      questions,
+      currentPage: pageNumber,
+      totalPages: Math.ceil(totalQuestions / limitNumber),
+      totalQuestions,
+    });
   } catch (error) {
     console.error("Error retrieving questions:", error);
     res.status(500).json({ message: error.message });

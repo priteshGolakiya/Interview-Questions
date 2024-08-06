@@ -5,6 +5,11 @@ const createAnswer = async (req, res) => {
   try {
     const { questionId, answers } = req.body;
 
+    // Check if 'answers' is an array
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({ message: "'answers' should be an array" });
+    }
+
     const question = await Question.findById(questionId);
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
@@ -46,6 +51,8 @@ const createAnswer = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
 const getAnswers = async (req, res) => {
   try {
     const answers = await Answer.find().populate("questionId");
